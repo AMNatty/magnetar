@@ -1,6 +1,10 @@
-use serde::Serialize;
+use serde::de::Error;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde_json::Value;
+use std::fmt::Debug;
+use std::str::FromStr;
 
-pub mod jsonld;
+pub mod activity_streams;
 pub mod webfinger;
 
 trait ContentType: Serialize {
@@ -51,8 +55,11 @@ pub mod content_type {
     use serde::de::Error;
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-    content_type!(pub ContentActivityPlusJson, "application/activity+json");
+    content_type!(pub ContentActivityStreams, "application/activity+json");
     content_type!(pub ContentHtml, "text/html");
+    content_type!(pub ContentJson, "application/json");
+    content_type!(pub ContentMultipartFormData, "multipart/form-data");
+    content_type!(pub ContentUrlEncoded, "application/x-www-form-urlencoded");
 }
 
 macro_rules! link_rel {
@@ -106,4 +113,37 @@ pub mod rel {
     link_rel!(pub RelWebFingerProfilePage, "http://webfinger.net/rel/profile-page");
     link_rel!(pub RelSelf, "self");
     link_rel!(pub RelOStatusSubscribe, "http://ostatus.org/schema/1.0/subscribe");
+}
+
+#[derive(Clone, Eq, PartialEq, Debug)]
+pub struct ListContaining<T: Clone + Eq + PartialEq + Debug + AsRef<str> + FromStr>(pub T);
+
+impl<T> Serialize for ListContaining<T>
+where
+    T: Clone + Eq + PartialEq + Debug + AsRef<str> + FromStr,
+{
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        vec![AsRef::<str>::as_ref(&self.0)].serialize(serializer)
+    }
+}
+
+impl<'de, T> Deserialize<'de> for ListContaining<T>
+where
+    T: Clone + Eq + PartialEq + Debug + AsRef<str> + FromStr,
+{
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let data = Vec::<Value>::deserialize(deserializer)?;
+
+        let dt = data
+            .iter()
+            .filter_map(Value::as_str)
+            .filter_map(|val| T::from_str(val).ok())
+            .next();
+
+        if let Some(value) = dt {
+            Ok(ListContaining(value))
+        } else {
+            Err(Error::custom("Count not find item in list.".to_string()))
+        }
+    }
 }

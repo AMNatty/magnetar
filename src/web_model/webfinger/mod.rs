@@ -1,4 +1,4 @@
-use crate::web_model::content_type::{ContentActivityPlusJson, ContentHtml};
+use crate::web_model::content_type::{ContentActivityStreams, ContentHtml};
 use crate::web_model::rel::{RelOStatusSubscribe, RelSelf, RelWebFingerProfilePage};
 use serde::de::Error;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -30,7 +30,7 @@ enum WebFingerRel {
     RelSelf {
         rel: RelSelf,
         #[serde(rename = "type")]
-        content_type: ContentActivityPlusJson,
+        content_type: ContentActivityStreams,
         href: String,
     },
     RelOStatusSubscribe {
@@ -73,7 +73,7 @@ impl<'de> Deserialize<'de> for Acct {
 
 #[cfg(test)]
 mod test {
-    use crate::web_model::content_type::{ContentActivityPlusJson, ContentHtml};
+    use crate::web_model::content_type::{ContentActivityStreams, ContentHtml};
     use crate::web_model::rel::{RelOStatusSubscribe, RelSelf, RelWebFingerProfilePage};
     use crate::web_model::webfinger::WebFingerSubject::Url;
     use crate::web_model::webfinger::{Acct, WebFinger, WebFingerRel, WebFingerSubject};
@@ -138,7 +138,7 @@ mod test {
                 },
                 WebFingerRel::RelSelf {
                     rel: RelSelf,
-                    content_type: ContentActivityPlusJson,
+                    content_type: ContentActivityStreams,
                     href: "https://tech.lgbt/users/natty".to_owned(),
                 },
                 WebFingerRel::RelOStatusSubscribe {
