@@ -2,17 +2,18 @@ use crate::web_model::content_type::{ContentActivityStreams, ContentHtml};
 use crate::web_model::rel::{RelOStatusSubscribe, RelSelf, RelWebFingerProfilePage};
 use serde::de::Error;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use std::borrow::Cow;
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-struct WebFinger {
-    subject: WebFingerSubject,
-    aliases: Vec<WebFingerSubject>,
-    links: Vec<WebFingerRel>,
+pub struct WebFinger {
+    pub subject: WebFingerSubject,
+    pub aliases: Vec<WebFingerSubject>,
+    pub links: Vec<WebFingerRel>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
-enum WebFingerSubject {
+pub enum WebFingerSubject {
     Acct(Acct),
     Url(String),
 }
@@ -20,7 +21,7 @@ enum WebFingerSubject {
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 #[allow(clippy::enum_variant_names)]
-enum WebFingerRel {
+pub enum WebFingerRel {
     RelWebFingerProfilePage {
         rel: RelWebFingerProfilePage,
         #[serde(rename = "type")]
@@ -41,6 +42,18 @@ enum WebFingerRel {
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Acct(String);
+
+impl Acct {
+    pub fn new(uri_without_acct: Cow<'_, str>) -> Self {
+        Acct(uri_without_acct.to_string())
+    }
+}
+
+impl From<&str> for Acct {
+    fn from(value: &str) -> Self {
+        Acct(value.strip_prefix("acct:").unwrap_or(value).to_string())
+    }
+}
 
 impl AsRef<str> for Acct {
     fn as_ref(&self) -> &str {
@@ -125,7 +138,7 @@ mod test {
         let webfinger: WebFinger = serde_json::from_value(json).unwrap();
 
         let real = WebFinger {
-            subject: WebFingerSubject::Acct(Acct("natty@tech.lgbt".to_owned())),
+            subject: WebFingerSubject::Acct(Acct::new("natty@tech.lgbt".into())),
             aliases: vec![
                 Url("https://tech.lgbt/@natty".to_owned()),
                 Url("https://tech.lgbt/users/natty".to_owned()),
