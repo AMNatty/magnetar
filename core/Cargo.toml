@@ -1,5 +1,6 @@
 [package]
 name = "magnetar_core"
+description = "A library to power an exploratory ActivityPub project"
 version = "0.1.0"
 license = "APGL"
 edition = "2021"
