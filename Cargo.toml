@@ -2,7 +2,7 @@
 name = "magnetar"
 description = "An exploratory ActivityPub project"
 version = "0.1.0"
-license = "APGL"
+license = "AGPL-3.0-only"
 edition = "2021"
 
 [workspace]
