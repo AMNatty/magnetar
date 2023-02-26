@@ -8,6 +8,8 @@ edition = "2021"
 [workspace]
 members = [
     ".",
+    "ext_activity_pub",
+    "ext_nodeinfo",
     "core"
 ]
 
@@ -27,4 +29,11 @@ tower-http = { version = "0.3", features = ["cors", "trace"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tracing = "0.1"
 
+ring = "0.16"
+rand = { version = "0.8", features = ["getrandom"] }
+rsa = "0.8"
+
 serde = { version = "1.0", features = ["derive"] }
+toml = "0.7"
+
+serde_json = "1.0"

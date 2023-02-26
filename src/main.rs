@@ -1,3 +1,4 @@
+pub mod config;
 pub mod webfinger;
 
 use anyhow::{anyhow, Context};
@@ -5,6 +6,7 @@ use axum::routing::get;
 use axum::Router;
 use dotenvy::dotenv;
 use std::net::SocketAddr;
+use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 use tracing::info;
@@ -23,15 +25,21 @@ async fn main() -> anyhow::Result<()> {
         .with_test_writer()
         .init();
 
-    let port: u16 = std::env::var("SERVER_PORT")
-        .unwrap_or_else(|_| "4939".to_string())
-        .parse()
-        .context("SERVER_PORT not a number")?;
+    let config = Arc::new(config::load_config()?);
 
     let well_known_router = Router::new().route("/webfinger", get(webfinger::handle_webfinger));
 
+    /*
+    let activity_pub_router = Router::new()
+        .route("/@!:id/outbox", get(activity_pub::handle_actor_get))
+        .route("/@:name/outbox", get(activity_pub::handle_actor_get))
+        .route("/@!:id", get(activity_pub::handle_actor_get))
+        .route("/@:name", get(activity_pub::handle_actor_get));
+    */
     let app = Router::new()
         .nest("/.well-known", well_known_router)
+        //.nest("/", activity_pub_router)
+        .with_state(config.clone())
         .layer(
             CorsLayer::new()
                 .allow_headers(Any)
@@ -40,7 +48,7 @@ async fn main() -> anyhow::Result<()> {
         )
         .layer(TraceLayer::new_for_http());
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], port));
+    let addr = SocketAddr::from((config.networking.bind_addr, config.networking.port));
     info!("Serving on: {addr}");
     axum::Server::bind(&addr)
         .serve(app.into_make_service())

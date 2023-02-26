@@ -1,0 +1,47 @@
+# Primary Magnetar configuration.
+# The location of the config to load may be overriden with MAG_CONFIG_PATH.
+
+# Please note options in this file take priority over environment variables.
+
+# Container quick start:
+# Technically it's not necessary to edit this file at all.
+# Set the following variables:
+#   - MAG_C_HOST (host)
+
+
+# --------------------------------[ LOGGING ]----------------------------------
+
+# Logging can be configured using the RUST_LOG environment variable.
+# See https://docs.rs/env_logger/0.10.0/env_logger/#enabling-logging
+# Default: "info"
+
+# -------------------------------[ NETWORKING ]--------------------------------
+
+# Magnetar does not contain a TLS ingress, please use a reverse proxy like:
+#   - Nginx (https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/)
+#   - Caddy (https://caddyserver.com/docs/quick-starts/reverse-proxy)
+#   - Traefik
+
+# [REQUIRED]
+# The hostname the instance will run on.
+# Environment variable: MAG_C_HOST
+# networking.host = "example.com"
+
+# [Optional]
+# The IP address the application will bind to.
+# Default: "::"
+# Environment variable: MAG_C_BIND_ADDR
+# networking.bind_addr = "::"
+
+# [Optional]
+# The port of the instance.
+# Default: 4939
+# Environment variable: MAG_C_PORT
+# networking.port = 4939
+
+# ----------------------------------[ DATA ]-----------------------------------
+
+
+
+# -------------------------------[ FEDERATION ]--------------------------------
+

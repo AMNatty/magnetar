@@ -12,6 +12,7 @@ pub struct WebFingerQuery {
     rel: Option<Vec<String>>,
 }
 
+// TODO: Filter by rel
 pub async fn handle_webfinger(
     Query(WebFingerQuery { resource, rel, .. }): Query<WebFingerQuery>,
 ) -> Result<Json<WebFinger>, StatusCode> {
@@ -23,8 +24,6 @@ pub async fn handle_webfinger(
         }
         other => other,
     };
-
-    println!("{resource:?}");
 
     Ok(Json(WebFinger {
         subject: WebFingerSubject::Acct("natty@tech.lgbt".into()),
