@@ -1,7 +1,7 @@
 pub mod config;
 pub mod webfinger;
 
-use anyhow::{anyhow, Context};
+use anyhow::anyhow;
 use axum::routing::get;
 use axum::Router;
 use dotenvy::dotenv;

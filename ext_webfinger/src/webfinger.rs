@@ -1,8 +1,7 @@
-use crate::web_model::content_type::{ContentActivityStreams, ContentHtml};
-use crate::web_model::rel::{RelOStatusSubscribe, RelSelf, RelWebFingerProfilePage};
-use serde::de::Error;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use std::borrow::Cow;
+use magnetar_core::web_model::acct::Acct;
+use magnetar_core::web_model::content_type::{ContentActivityStreams, ContentHtml};
+use magnetar_core::web_model::rel::{RelOStatusSubscribe, RelSelf, RelWebFingerProfilePage};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct WebFinger {
@@ -40,74 +39,14 @@ pub enum WebFingerRel {
     },
 }
 
-#[derive(Debug, Clone, Eq, PartialEq)]
-pub struct Acct(String);
-
-impl Acct {
-    pub fn new(uri_without_acct: Cow<'_, str>) -> Self {
-        Acct(uri_without_acct.to_string())
-    }
-}
-
-impl From<&str> for Acct {
-    fn from(value: &str) -> Self {
-        Acct(value.strip_prefix("acct:").unwrap_or(value).to_string())
-    }
-}
-
-impl AsRef<str> for Acct {
-    fn as_ref(&self) -> &str {
-        &self.0
-    }
-}
-
-impl Serialize for Acct {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.serialize_str(&format!("acct:{}", self.0))
-    }
-}
-
-impl<'de> Deserialize<'de> for Acct {
-    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        let acct = String::deserialize(deserializer)?;
-
-        if let Some(rem) = acct.strip_prefix("acct:") {
-            Ok(Acct(rem.to_owned()))
-        } else {
-            Err(Error::custom(
-                "Missing acct protocol for account!".to_owned(),
-            ))
-        }
-    }
-}
-
 #[cfg(test)]
 mod test {
-    use crate::web_model::content_type::{ContentActivityStreams, ContentHtml};
-    use crate::web_model::rel::{RelOStatusSubscribe, RelSelf, RelWebFingerProfilePage};
-    use crate::web_model::webfinger::WebFingerSubject::Url;
-    use crate::web_model::webfinger::{Acct, WebFinger, WebFingerRel, WebFingerSubject};
+    use crate::webfinger::WebFingerSubject::Url;
+    use crate::webfinger::{WebFinger, WebFingerRel, WebFingerSubject};
+    use magnetar_core::web_model::acct::Acct;
+    use magnetar_core::web_model::content_type::{ContentActivityStreams, ContentHtml};
+    use magnetar_core::web_model::rel::{RelOStatusSubscribe, RelSelf, RelWebFingerProfilePage};
     use serde_json::json;
-
-    #[test]
-    fn should_remove_acct_prefix() {
-        let json = json!("acct:natty@tech.lgbt");
-
-        let acct: Acct = serde_json::from_value(json).unwrap();
-
-        assert_eq!(acct, Acct("natty@tech.lgbt".to_owned()))
-    }
-
-    #[test]
-    fn should_add_acct_prefix() {
-        let acct = Acct("natty@tech.lgbt".to_owned());
-        let json = serde_json::to_value(acct).unwrap();
-
-        assert_eq!(json, json!("acct:natty@tech.lgbt"));
-    }
 
     #[test]
     fn should_parse_webfinger() {

@@ -10,11 +10,13 @@ members = [
     ".",
     "ext_activity_pub",
     "ext_nodeinfo",
+    "ext_webfinger",
     "core"
 ]
 
 [dependencies]
 magnetar_core = { path = "./core", version = "0.1" }
+magnetar_webfinger = { path = "./ext_webfinger", version = "0.1"}
 
 anyhow = "1.0"
 

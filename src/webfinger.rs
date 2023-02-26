@@ -1,9 +1,10 @@
 use axum::extract::Query;
 use axum::http::StatusCode;
 use axum::Json;
+use magnetar_core::web_model::acct::Acct;
 use magnetar_core::web_model::content_type::{ContentActivityStreams, ContentHtml};
 use magnetar_core::web_model::rel::{RelOStatusSubscribe, RelSelf, RelWebFingerProfilePage};
-use magnetar_core::web_model::webfinger::{Acct, WebFinger, WebFingerRel, WebFingerSubject};
+use magnetar_webfinger::webfinger::{WebFinger, WebFingerRel, WebFingerSubject};
 use serde::Deserialize;
 
 #[derive(Deserialize)]

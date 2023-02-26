@@ -417,6 +417,7 @@ dependencies = [
  "dotenvy",
  "hyper",
  "magnetar_core",
+ "magnetar_webfinger",
  "rand",
  "ring",
  "rsa",
@@ -447,6 +448,15 @@ dependencies = [
 name = "magnetar_nodeinfo"
 version = "0.1.0"
 dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "magnetar_webfinger"
+version = "0.1.0"
+dependencies = [
+ "magnetar_core",
  "serde",
  "serde_json",
 ]

@@ -4,8 +4,8 @@ use serde_json::Value;
 use std::fmt::Debug;
 use std::str::FromStr;
 
+pub mod acct;
 pub mod activity_streams;
-pub mod webfinger;
 
 trait ContentType: Serialize {
     fn mime_type(&self) -> &'static str;
