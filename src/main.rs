@@ -1,13 +1,15 @@
-pub mod activity_pub;
 pub mod config;
+pub mod nodeinfo;
+pub mod util;
 pub mod webfinger;
 
+use crate::nodeinfo::{handle_nodeinfo, handle_nodeinfo_20, handle_nodeinfo_21};
 use anyhow::anyhow;
 use axum::routing::get;
 use axum::Router;
 use dotenvy::dotenv;
+use magnetar_calckey_model::{CalckeyModel, ConnectorConfig};
 use std::net::SocketAddr;
-use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 use tracing::info;
@@ -26,21 +28,29 @@ async fn main() -> anyhow::Result<()> {
         .with_test_writer()
         .init();
 
-    let config = Arc::new(config::load_config()?);
+    let config = &*Box::leak::<'static>(Box::new(config::load_config()?));
 
-    let well_known_router = Router::new().route("/webfinger", get(webfinger::handle_webfinger));
+    let db = CalckeyModel::new(ConnectorConfig {
+        url: config.data.database_url.clone(),
+    })
+    .await?;
 
-    /*
-    let activity_pub_router = Router::new()
-        .route("/@!:id/outbox", get(activity_pub::handle_actor_get))
-        .route("/@:name/outbox", get(activity_pub::handle_actor_get))
-        .route("/@!:id", get(activity_pub::handle_actor_get))
-        .route("/@:name", get(activity_pub::handle_actor_get));
-    */
+    let well_known_router = Router::new()
+        .route(
+            "/webfinger",
+            get(webfinger::handle_webfinger).with_state((config, db)),
+        )
+        .route("/nodeinfo", get(handle_nodeinfo));
+
+    let nodeinfo_router = Router::new()
+        .with_state(config)
+        .route("/2.0", get(handle_nodeinfo_20))
+        .route("/2.1", get(handle_nodeinfo_21));
+
     let app = Router::new()
         .nest("/.well-known", well_known_router)
-        //.nest("/", activity_pub_router)
-        .with_state(config.clone())
+        .nest("/nodeinfo", nodeinfo_router)
+        .with_state(config)
         .layer(
             CorsLayer::new()
                 .allow_headers(Any)

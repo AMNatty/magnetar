@@ -7,7 +7,7 @@ use std::str::FromStr;
 pub mod acct;
 pub mod activity_streams;
 
-trait ContentType: Serialize {
+pub trait ContentType: Serialize {
     fn mime_type(&self) -> &'static str;
 }
 
@@ -58,6 +58,7 @@ pub mod content_type {
     content_type!(pub ContentActivityStreams, "application/activity+json");
     content_type!(pub ContentHtml, "text/html");
     content_type!(pub ContentJson, "application/json");
+    content_type!(pub ContentJrdJson, "application/jrd+json");
     content_type!(pub ContentMultipartFormData, "multipart/form-data");
     content_type!(pub ContentUrlEncoded, "application/x-www-form-urlencoded");
 }
@@ -101,7 +102,7 @@ macro_rules! link_rel {
     };
 }
 
-trait Rel: Serialize {
+pub trait Rel: Serialize {
     fn rel(&self) -> &'static str;
 }
 
@@ -113,6 +114,8 @@ pub mod rel {
     link_rel!(pub RelWebFingerProfilePage, "http://webfinger.net/rel/profile-page");
     link_rel!(pub RelSelf, "self");
     link_rel!(pub RelOStatusSubscribe, "http://ostatus.org/schema/1.0/subscribe");
+    link_rel!(pub RelNodeInfo20, "http://nodeinfo.diaspora.software/ns/schema/2.0");
+    link_rel!(pub RelNodeInfo21, "http://nodeinfo.diaspora.software/ns/schema/2.1");
 }
 
 #[derive(Clone, Eq, PartialEq, Debug)]

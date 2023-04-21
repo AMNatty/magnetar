@@ -7,6 +7,7 @@
 # Technically it's not necessary to edit this file at all.
 # Set the following variables:
 #   - MAG_C_HOST (host)
+#   - MAG_C_DATABASE_URL (Postgres database connection URL)
 
 
 # --------------------------------[ LOGGING ]----------------------------------
@@ -28,20 +29,58 @@
 # networking.host = "example.com"
 
 # [Optional]
-# The IP address the application will bind to.
-# Default: "::"
-# Environment variable: MAG_C_BIND_ADDR
-# networking.bind_addr = "::"
-
-# [Optional]
 # The port of the instance.
 # Default: 4939
 # Environment variable: MAG_C_PORT
 # networking.port = 4939
 
+# [Optional]
+# The protocol to use for the instance.
+# Possible values: "http", "https"
+# Default: "https"
+# Environment variable: MAG_C_PROTOCOL
+# networking.protocol = "https"
+
+# [Optional]
+# The IP address the application will bind to.
+# Default: "::"
+# Environment variable: MAG_C_BIND_ADDR
+# networking.bind_addr = "::"
+
 # ----------------------------------[ DATA ]-----------------------------------
 
+# [REQUIRED]
+# An URL pointing to a Postgres database, with a Calckey database
+# Environment variables: MAG_C_DATABASE_URL, DATABASE_URL
+# data.database_url = "postgres://username:password@db:5432/calckey"
 
 
 # -------------------------------[ FEDERATION ]--------------------------------
 
+
+
+# --------------------------------[ BRANDING ]---------------------------------
+
+# [Optional]
+# The name of this software
+# Default: "magnetar"
+# Environment variable: MAG_C_BR_NAME
+# branding.name = "magnetar"
+
+# [Optional]
+# The version of this software
+# Default: <the version the software was compiled with>
+# Environment variable: MAG_C_BR_VERSION
+# branding.version = "0.1"
+
+# [Optional]
+# The homepage of this software
+# Default: "https://git.astolfo.cool/natty/magnetar"
+# Environment variable: MAG_C_BR_HOMEPAGE
+# branding.homepage = "https://git.astolfo.cool/natty/magnetar"
+
+# [Optional]
+# The repository of this software
+# Default: "https://git.astolfo.cool/natty/magnetar"
+# Environment variable: MAG_C_BR_REPOSITORY
+# branding.repository = "https://git.astolfo.cool/natty/magnetar"

@@ -10,12 +10,15 @@ members = [
     ".",
     "ext_nodeinfo",
     "ext_webfinger",
+    "ext_calckey_model",
     "core"
 ]
 
 [dependencies]
 magnetar_core = { path = "./core", version = "0.1" }
 magnetar_webfinger = { path = "./ext_webfinger", version = "0.1"}
+magnetar_nodeinfo = { path = "./ext_nodeinfo", version = "0.1"}
+magnetar_calckey_model = { path = "./ext_calckey_model", version = "0.1" }
 
 anyhow = "1.0"
 
@@ -33,6 +36,8 @@ tracing = "0.1"
 ring = "0.16"
 rand = { version = "0.8", features = ["getrandom"] }
 rsa = "0.8"
+
+percent-encoding = "2.2"
 
 serde = { version = "1.0", features = ["derive"] }
 toml = "0.7"

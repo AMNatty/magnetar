@@ -6,7 +6,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct WebFinger {
     pub subject: WebFingerSubject,
-    pub aliases: Vec<WebFingerSubject>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub aliases: Option<Vec<WebFingerSubject>>,
     pub links: Vec<WebFingerRel>,
 }
 
@@ -78,10 +79,10 @@ mod test {
 
         let real = WebFinger {
             subject: WebFingerSubject::Acct(Acct::new("natty@tech.lgbt".into())),
-            aliases: vec![
+            aliases: Some(vec![
                 Url("https://tech.lgbt/@natty".to_owned()),
                 Url("https://tech.lgbt/users/natty".to_owned()),
-            ],
+            ]),
             links: vec![
                 WebFingerRel::RelWebFingerProfilePage {
                     rel: RelWebFingerProfilePage,

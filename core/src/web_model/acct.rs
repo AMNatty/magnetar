@@ -1,5 +1,5 @@
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
-use std::borrow::Cow;
+use std::borrow::{Borrow, Cow};
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Acct(String);
@@ -10,9 +10,10 @@ impl Acct {
     }
 }
 
-impl From<&str> for Acct {
-    fn from(value: &str) -> Self {
-        Acct(value.strip_prefix("acct:").unwrap_or(value).to_string())
+impl<S: Borrow<str>> From<S> for Acct {
+    fn from(value: S) -> Self {
+        let val = value.borrow();
+        Acct(val.strip_prefix("acct:").unwrap_or(val).to_string())
     }
 }
 

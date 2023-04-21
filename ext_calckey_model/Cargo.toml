@@ -1,0 +1,19 @@
+[package]
+name = "magnetar_calckey_model"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+ck = { path = "./entity_ck" }
+
+anyhow = "1"
+dotenvy = "0.15"
+log = "0.4"
+tokio = { version = "1.24", features = ["full"] }
+sea-orm = { version = "0.11", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1"
+chrono = "0.4"
