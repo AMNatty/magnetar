@@ -8,7 +8,6 @@ edition = "2021"
 [workspace]
 members = [
     ".",
-    "ext_activity_pub",
     "ext_nodeinfo",
     "ext_webfinger",
     "core"
@@ -26,7 +25,7 @@ axum = "0.6"
 hyper = { version = "0.14", features = ["full"] }
 tokio = { version = "1.24", features = ["full"] }
 tower = "0.4"
-tower-http = { version = "0.3", features = ["cors", "trace"] }
+tower-http = { version = "0.4", features = ["cors", "trace"] }
 
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tracing = "0.1"

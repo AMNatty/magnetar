@@ -1,3 +1,4 @@
+pub mod activity_pub;
 pub mod config;
 pub mod webfinger;
 
