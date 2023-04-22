@@ -14,6 +14,7 @@ pub struct MagnetarNetworking {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "snake_case")]
 pub enum MagnetarNetworkingProtocol {
     Http,
     Https,

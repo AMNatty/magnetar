@@ -13,7 +13,7 @@ impl<S1: AsRef<str>, S2: AsRef<str>> From<(S1, Option<S2>)> for FediverseTag {
     fn from((name, host): (S1, Option<S2>)) -> Self {
         Self {
             name: name.as_ref().to_owned(),
-            host: host.as_ref().map(S2::as_ref).map(&str::to_owned),
+            host: host.as_ref().map(S2::as_ref).map(str::to_owned),
         }
     }
 }
@@ -40,7 +40,7 @@ pub fn lenient_parse_acct(acct: &Acct) -> anyhow::Result<FediverseTag> {
 
 fn split_tag_inner(tag: impl AsRef<str>) -> (String, Option<String>) {
     let tag = tag.as_ref();
-    let tag = tag.strip_prefix("@").unwrap_or(tag.as_ref());
+    let tag = tag.strip_prefix('@').unwrap_or(tag.as_ref());
 
     match tag.split_once('@') {
         Some((name, host)) if name.is_empty() => (host.to_owned(), None),
@@ -50,11 +50,14 @@ fn split_tag_inner(tag: impl AsRef<str>) -> (String, Option<String>) {
 }
 
 fn validate_tag_inner((name, host): (&str, Option<&str>)) -> anyhow::Result<()> {
-    if name.chars().any(|c| !c.is_alphanumeric()) {
+    if name
+        .chars()
+        .any(|c| !c.is_alphanumeric() && c != '-' && c != '.')
+    {
         return Err(anyhow!("Invalid char in tag: {name}"));
     }
 
-    if let Some(ref host_str) = host {
+    if let Some(host_str) = host {
         if host_str
             .chars()
             .any(|c| c.is_control() || c.is_whitespace() || c == '/' || c == '#')
