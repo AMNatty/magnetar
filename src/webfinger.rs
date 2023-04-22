@@ -73,7 +73,15 @@ pub async fn handle_webfinger(
     let mut aliases = Vec::new();
 
     match tag.host {
-        Some(ref host) if host != &config.networking.host => {}
+        Some(ref host) if host != &config.networking.host => {
+            if let Some(uri) = user.uri {
+                links.push(WebFingerRel::RelSelf {
+                    rel: RelSelf,
+                    content_type: ContentActivityStreams,
+                    href: uri,
+                });
+            }
+        }
         _ => {
             links.push(WebFingerRel::RelOStatusSubscribe {
                 rel: RelOStatusSubscribe,
@@ -95,15 +103,16 @@ pub async fn handle_webfinger(
             });
 
             aliases.push(WebFingerSubject::Url(user_url));
-        }
-    }
 
-    if let Some(uri) = user.uri {
-        links.push(WebFingerRel::RelSelf {
-            rel: RelSelf,
-            content_type: ContentActivityStreams,
-            href: uri,
-        });
+            links.push(WebFingerRel::RelSelf {
+                rel: RelSelf,
+                content_type: ContentActivityStreams,
+                href: format!(
+                    "{}://{}/users/{}",
+                    config.networking.protocol, config.networking.host, user.id
+                ),
+            });
+        }
     }
 
     Ok((
