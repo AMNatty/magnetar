@@ -40,12 +40,17 @@ pub async fn handle_webfinger(
                 StatusCode::UNPROCESSABLE_ENTITY
             })?;
 
-            ck.get_user_by_tag(&tag.name, tag.host.as_deref())
-                .await
-                .map_err(|e| {
-                    error!("Data error: {e}");
-                    StatusCode::INTERNAL_SERVER_ERROR
-                })?
+            ck.get_user_by_tag(
+                &tag.name,
+                tag.host
+                    .filter(|host| *host != config.networking.host)
+                    .as_deref(),
+            )
+            .await
+            .map_err(|e| {
+                error!("Data error: {e}");
+                StatusCode::INTERNAL_SERVER_ERROR
+            })?
         }
         // Kinda a
         WebFingerSubject::Url(url) => ck.get_user_by_uri(&url).await.map_err(|e| {
@@ -59,7 +64,10 @@ pub async fn handle_webfinger(
     }
 
     let user = user.unwrap();
-    let tag = FediverseTag::from((&user.username, user.host.as_ref()));
+    let tag = FediverseTag::from((
+        &user.username,
+        user.host.as_ref().or(Some(&config.networking.host)),
+    ));
 
     let mut links = Vec::new();
     let mut aliases = Vec::new();
