@@ -16,7 +16,7 @@ const NODEINFO_PATH: &str = "/nodeinfo";
 #[derive(Clone, Debug, Serialize)]
 pub struct NodeInfoLink {
     rel: &'static str,
-    href: &'static str,
+    href: String,
 }
 
 pub async fn handle_nodeinfo(
@@ -24,11 +24,17 @@ pub async fn handle_nodeinfo(
 ) -> Json<Vec<NodeInfoLink>> {
     Json(vec![
         NodeInfoLink {
-            href: "/nodeinfo/2.0",
+            href: format!(
+                "{}://{}/nodeinfo/2.0",
+                config.networking.protocol, config.networking.host
+            ),
             rel: RelNodeInfo20.rel(),
         },
         NodeInfoLink {
-            href: "/nodeinfo/2.1",
+            href: format!(
+                "{}://{}/nodeinfo/2.1",
+                config.networking.protocol, config.networking.host
+            ),
             rel: RelNodeInfo21.rel(),
         },
     ])
