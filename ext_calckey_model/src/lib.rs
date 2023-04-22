@@ -35,7 +35,11 @@ impl CalckeyModel {
                 .filter(user::Column::UsernameLower.eq(name))
                 .filter(user::Column::Host.eq(instance))
         } else {
-            user::Entity::find().filter(user::Column::UsernameLower.eq(name))
+            user::Entity::find().filter(
+                user::Column::UsernameLower
+                    .eq(name)
+                    .and(user::Column::Host.is_null()),
+            )
         }
         .one(&self.0)
         .await?;
