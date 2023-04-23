@@ -1,4 +1,3 @@
 # magnetar
 
-I have no idea what this is gonna be, but hey.
-
+Project moved to <https://git.astolfo.cool/natty/magnetar>
